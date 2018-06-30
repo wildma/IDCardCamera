@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_000000">
+
+    <!--相机预览-->
+    <com.wildma.idcardcamera.camera.CameraPreview
+        android:id="@+id/camera_preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <!--左侧相机预览布局-->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <!--相机裁剪区域左边-->
+            <View
+                android:id="@+id/view_camera_crop_left"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/preview_mock" />
+
+            <LinearLayout
+                android:id="@+id/ll_camera_crop_container"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:orientation="vertical">
+
+                <!--相机裁剪区域顶部-->
+                <View
+                    android:id="@+id/view_camera_crop_top"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="@color/preview_mock" />
+
+                <!--相机裁剪区域-->
+                <ImageView
+                    android:id="@+id/iv_camera_crop"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:scaleType="fitXY" />
+
+                <!--手动裁剪区域-->
+                <com.wildma.idcardcamera.cropper.CropImageView
+                    android:visibility="gone"
+                    android:id="@+id/crop_image_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <!--相机裁剪区域底部-->
+                <TextView
+                    android:id="@+id/view_camera_crop_bottom"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="@color/preview_mock"
+                    android:gravity="center"
+                    android:text="@string/touch_to_focus"
+                    android:textColor="@color/color_afff"
+                    android:textSize="16dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!--右侧操作布局-->
+        <FrameLayout
+            android:layout_width="136dp"
+            android:layout_height="match_parent"
+            android:background="@color/preview_mock">
+
+            <!--拍照前操作布局-->
+            <LinearLayout
+                android:id="@+id/ll_camera_option"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/iv_camera_flash"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@mipmap/camera_flash_off" />
+
+                <ImageView
+                    android:id="@+id/iv_camera_take"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_margin="32dp"
+                    android:src="@mipmap/camera_take" />
+
+                <ImageView
+                    android:id="@+id/iv_camera_close"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@mipmap/camera_close" />
+
+            </LinearLayout>
+
+            <!--拍照后操作布局-->
+            <LinearLayout
+                android:id="@+id/ll_camera_result"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/iv_camera_result_ok"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@mipmap/camera_result_ok" />
+
+                <ImageView
+                    android:id="@+id/iv_camera_result_cancel"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="80dp"
+                    android:src="@mipmap/camera_result_cancel" />
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+    </LinearLayout>
+</RelativeLayout>
