@@ -14,16 +14,21 @@ Android自定义相机实现身份证拍照，并加入自动对焦与图片不�
 
 ### 2 使用
 使用非常简单，只需要简单的3步即可。
-##### 1. 引用本地lib，即将idcardcamera作为module依赖到主module app中，如下：
+##### Step 1. 添加JitPack仓库 （或者引用本地lib）
 ```
-compile project(':idcardcamera')
+	allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
 ```
-##### 2. 调用CameraActivity类的toCameraActivity方法打开拍照界面，如下：
+##### Step 2. 调用CameraActivity类的toCameraActivity方法打开拍照界面
 ```
 CameraActivity.toCameraActivity(this, CameraActivity.TYPE_IDCARD_FRONT);
 ```
 
-##### 3. onActivityResult方法中获取裁剪后的图片
+##### Step 3. 在onActivityResult方法中获取裁剪后的图片
 ```
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
