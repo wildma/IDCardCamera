@@ -1,3 +1,5 @@
+[！[]（https://jitpack.io/v/wildma/IDCardCamera.svg）（https://jitpack.io/#wildma/IDCardCamera）
+
 # WildmaIDCardCamera
 Android自定义相机实现身份证拍照，并加入自动对焦与图片不规则裁剪
 
