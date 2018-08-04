@@ -1,10 +1,5 @@
 apply plugin: 'com.android.library'
 
-//启用android-maven-gradle-plugin
-apply plugin: 'com.github.dcendents.android-maven'
-//your group
-group='com.github.wildma'
-
 android {
     compileSdkVersion 26
     buildToolsVersion "26.0.0"
