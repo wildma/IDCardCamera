@@ -19,7 +19,7 @@
         >
         <activity
             android:name=".camera.CameraActivity"
-            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"/>
     </application>
 

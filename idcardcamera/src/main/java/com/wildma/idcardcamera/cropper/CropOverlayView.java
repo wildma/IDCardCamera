@@ -106,7 +106,7 @@ public class CropOverlayView extends View {
         if (maxX - minX < defaultMargin || maxY - minY < defaultMargin)
             defaultMargin = 0; // remove min
         else
-            defaultMargin = 100;
+            defaultMargin = 30;
 
         Log.e("stk", "maxX - minX=" + (maxX - minX));
         Log.e("stk", "maxY - minY=" + (maxY - minY));

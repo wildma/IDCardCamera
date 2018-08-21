@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
@@ -40,7 +41,7 @@ public class CameraActivity extends Activity implements View.OnClickListener {
     public final static int    TYPE_IDCARD_BACK       = 2;//身份证反面
     public final static int    REQUEST_CODE           = 0X11;//请求码
     public final static int    RESULT_CODE            = 0X12;//结果码
-    public final static int    PERMISSION_CODE_SECOND = 0x13;//权限请求码
+    public final static int    PERMISSION_CODE_FIRST = 0x13;//权限请求码
     public final static String TAKE_TYPE              = "take_type";//拍摄类型标记
     public final static String IMAGE_PATH             = "image_path";//图片路径标记
     public static int      mType;//拍摄类型
@@ -88,9 +89,9 @@ public class CameraActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
 
         /*动态请求需要的权限*/
-        boolean checkPermissionSecond = PermissionUtils.checkPermissionFirst(this, PERMISSION_CODE_SECOND,
+        boolean checkPermissionFirst = PermissionUtils.checkPermissionFirst(this, PERMISSION_CODE_FIRST,
                 new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA});
-        if (checkPermissionSecond) {
+        if (checkPermissionFirst) {
             init();
         }
     }
@@ -168,6 +169,19 @@ public class CameraActivity extends Activity implements View.OnClickListener {
                 mIvCameraCrop.setImageResource(R.mipmap.camera_idcard_back);
                 break;
         }
+
+        /*增加0.5秒过渡界面，解决个别手机首次申请权限导致预览界面启动慢的问题*/
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mCameraPreview.setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+        }, 500);
     }
 
     private void initListener() {
