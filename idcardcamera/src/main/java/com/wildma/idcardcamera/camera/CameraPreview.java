@@ -166,7 +166,11 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
      */
     public void focus() {
         if (camera != null) {
-            camera.autoFocus(null);
+            try {
+                camera.autoFocus(null);
+            } catch (Exception e) {
+                Log.d(TAG, "takePhoto " + e);
+            }
         }
     }
 
@@ -198,8 +202,11 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
      */
     public void takePhoto(Camera.PictureCallback pictureCallback) {
         if (camera != null) {
-            camera.takePicture(null, null, pictureCallback);
-            //            camera.stopPreview();
+            try {
+                camera.takePicture(null, null, pictureCallback);
+            } catch (Exception e) {
+                Log.d(TAG, "takePhoto " + e);
+            }
         }
     }
 

@@ -370,6 +370,10 @@ public class CropOverlayView extends View {
                 Math.max(bitmapBottomRight.x, bitmapTopRight.x),
                 Math.max(bitmapBottomRight.y, bitmapBottomLeft.y));
 
+        if(cropRect.width() <= 0 || cropRect.height() <= 0) { //用户裁剪的宽或高为0
+            cropListener.onFinish(null);
+            return;
+        }
         Bitmap cut = Bitmap.createBitmap(
                 output,
                 cropRect.left,

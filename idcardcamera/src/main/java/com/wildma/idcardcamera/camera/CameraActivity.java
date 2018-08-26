@@ -294,6 +294,10 @@ public class CameraActivity extends Activity implements View.OnClickListener {
         mCropImageView.crop(new CropListener() {
             @Override
             public void onFinish(Bitmap bitmap) {
+                if(bitmap == null) {
+                    Toast.makeText(getApplicationContext(), getString(R.string.crop_fail), Toast.LENGTH_SHORT).show();
+                    finish();
+                }
 
                 /*保存图片到sdcard并返回图片路径*/
                 if (FileUtils.createOrExistsDir(Constant.DIR_ROOT)) {
