@@ -29,7 +29,7 @@ allprojects {
 在需要使用的module中添加依赖
 ```
 dependencies {
-	compile 'com.github.wildma:IDCardCamera:1.0.0'
+	compile 'com.github.wildma:IDCardCamera:1.0.1'
 }
 ```
 或者引用本地lib
