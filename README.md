@@ -1,11 +1,9 @@
-[![](https://jitpack.io/v/wildma/IDCardCamera.svg)](https://jitpack.io/#wildma/IDCardCamera)
+# Android自定义身份证相机-IDCardCamera
+
+[![jitpack](https://jitpack.io/v/wildma/IDCardCamera.svg)](https://jitpack.io/#wildma/IDCardCamera)
 [![API](https://img.shields.io/badge/API-15%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=15)
 [![](https://img.shields.io/badge/License-Apache--2.0-brightgreen.svg)](https://github.com/wildma/IDCardCamera/blob/master/LICENSE)
 [![](https://img.shields.io/badge/Author-wildma-7AD6FD.svg)](https://github.com/wildma)
-
-
-# WildmaIDCardCamera
-Android自定义相机实现身份证拍照，并加入自动对焦与图片不规则裁剪
 
 ### 效果图：
 ![身份证来源网络虚拟构造](https://github.com/wildma/IDCardCamera/blob/master/screenshots/screenshot.jpg)
