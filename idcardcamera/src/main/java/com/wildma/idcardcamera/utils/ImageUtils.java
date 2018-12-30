@@ -2,8 +2,13 @@ package com.wildma.idcardcamera.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
+import android.graphics.ImageFormat;
+import android.graphics.Rect;
+import android.graphics.YuvImage;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -93,5 +98,24 @@ public class ImageUtils {
      */
     private static boolean isEmptyBitmap(Bitmap src) {
         return src == null || src.getWidth() == 0 || src.getHeight() == 0;
+    }
+
+    /**
+     * 将byte[]转换成Bitmap
+     *
+     * @param bytes
+     * @param width
+     * @param height
+     * @return
+     */
+    public static Bitmap getBitmapFromByte(byte[] bytes, int width, int height) {
+        final YuvImage image = new YuvImage(bytes, ImageFormat.NV21, width, height, null);
+        ByteArrayOutputStream os = new ByteArrayOutputStream(bytes.length);
+        if (!image.compressToJpeg(new Rect(0, 0, width, height), 100, os)) {
+            return null;
+        }
+        byte[] tmp = os.toByteArray();
+        Bitmap bmp = BitmapFactory.decodeByteArray(tmp, 0, tmp.length);
+        return bmp;
     }
 }

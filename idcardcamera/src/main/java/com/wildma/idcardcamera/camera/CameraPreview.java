@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.wildma.idcardcamera.utils.ScreenUtils;
+
 import java.util.List;
 
 /**
@@ -25,6 +27,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     private Camera           camera;
     private AutoFocusManager mAutoFocusManager;
     private SensorControler  mSensorControler;
+    private Context          mContext;
 
     public CameraPreview(Context context) {
         super(context);
@@ -48,6 +51,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     }
 
     private void init(Context context) {
+        mContext = context;
         SurfaceHolder surfaceHolder = getHolder();
         surfaceHolder.addCallback(this);
         surfaceHolder.setKeepScreenOn(true);
@@ -76,19 +80,13 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
                     camera.setDisplayOrientation(0);
                     parameters.setRotation(0);
                 }
-                Camera.Size bestSize = getBestSize(parameters.getSupportedPreviewSizes());
-                if (bestSize != null) {
-                    parameters.setPreviewSize(bestSize.width, bestSize.height);
-                    parameters.setPictureSize(bestSize.width, bestSize.height);
-                } else {
-                    parameters.setPreviewSize(1920, 1080);
-                    parameters.setPictureSize(1920, 1080);
-                }
+                List<Camera.Size> sizeList = parameters.getSupportedPreviewSizes();//获取所有支持的预览大小
+                Camera.Size bestSize = getOptimalPreviewSize(sizeList, ScreenUtils.getScreenWidth(mContext), ScreenUtils.getScreenHeight(mContext));
+                parameters.setPreviewSize(bestSize.width, bestSize.height);//设置预览大小
                 camera.setParameters(parameters);
                 camera.startPreview();
                 focus();//首次对焦
-                //定时对焦
-                //mAutoFocusManager = new AutoFocusManager(camera);
+                //mAutoFocusManager = new AutoFocusManager(camera);//定时对焦
             } catch (Exception e) {
                 Log.d(TAG, "Error setting camera preview: " + e.getMessage());
                 try {
@@ -104,14 +102,56 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
                     camera.setParameters(parameters);
                     camera.startPreview();
                     focus();//首次对焦
-                    //定时对焦
-                    //mAutoFocusManager = new AutoFocusManager(camera);
+                    //mAutoFocusManager = new AutoFocusManager(camera);//定时对焦
                 } catch (Exception e1) {
                     e.printStackTrace();
                     camera = null;
                 }
             }
         }
+    }
+
+    /**
+     * 获取最佳预览大小
+     *
+     * @param sizes 所有支持的预览大小
+     * @param w     SurfaceView宽
+     * @param h     SurfaceView高
+     * @return
+     */
+    private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
+        final double ASPECT_TOLERANCE = 0.1;
+        double targetRatio = (double) w / h;
+        if (sizes == null)
+            return null;
+
+        Camera.Size optimalSize = null;
+        double minDiff = Double.MAX_VALUE;
+
+        int targetHeight = h;
+
+        // Try to find an size match aspect ratio and size
+        for (Camera.Size size : sizes) {
+            double ratio = (double) size.width / size.height;
+            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE)
+                continue;
+            if (Math.abs(size.height - targetHeight) < minDiff) {
+                optimalSize = size;
+                minDiff = Math.abs(size.height - targetHeight);
+            }
+        }
+
+        // Cannot find the one match the aspect ratio, ignore the requirement
+        if (optimalSize == null) {
+            minDiff = Double.MAX_VALUE;
+            for (Camera.Size size : sizes) {
+                if (Math.abs(size.height - targetHeight) < minDiff) {
+                    optimalSize = size;
+                    minDiff = Math.abs(size.height - targetHeight);
+                }
+            }
+        }
+        return optimalSize;
     }
 
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
@@ -121,28 +161,6 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     public void surfaceDestroyed(SurfaceHolder holder) {
         //回收释放资源
         release();
-    }
-
-    /**
-     * Android相机的预览尺寸都是4:3或者16:9，这里遍历所有支持的预览尺寸，得到16:9的最大尺寸，保证成像清晰度
-     *
-     * @param sizes
-     * @return 最佳尺寸
-     */
-    private Camera.Size getBestSize(List<Camera.Size> sizes) {
-        Camera.Size bestSize = null;
-        for (Camera.Size size : sizes) {
-            if ((float) size.width / (float) size.height == 16.0f / 9.0f) {
-                if (bestSize == null) {
-                    bestSize = size;
-                } else {
-                    if (size.width > bestSize.width) {
-                        bestSize = size;
-                    }
-                }
-            }
-        }
-        return bestSize;
     }
 
     /**

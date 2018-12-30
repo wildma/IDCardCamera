@@ -11,6 +11,9 @@ import android.hardware.Camera;
  * Desc	        ${相机工具类}
  */
 public class CameraUtils {
+
+    private static Camera camera;
+
     /**
      * 检查是否有相机
      *
@@ -33,12 +36,16 @@ public class CameraUtils {
      * @return
      */
     public static Camera openCamera() {
-        Camera c = null;
+        camera = null;
         try {
-            c = Camera.open(); // attempt to get a Camera instance
+            camera = Camera.open(); // attempt to get a Camera instance
         } catch (Exception e) {
             // Camera is not available (in use or does not exist)
         }
-        return c; // returns null if camera is unavailable
+        return camera; // returns null if camera is unavailable
+    }
+
+    public static Camera getCamera() {
+        return camera;
     }
 }

@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,9 +13,9 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +26,7 @@ import com.wildma.idcardcamera.global.Constant;
 import com.wildma.idcardcamera.utils.FileUtils;
 import com.wildma.idcardcamera.utils.ImageUtils;
 import com.wildma.idcardcamera.utils.PermissionUtils;
+import com.wildma.idcardcamera.utils.ScreenUtils;
 
 
 /**
@@ -37,16 +37,15 @@ import com.wildma.idcardcamera.utils.PermissionUtils;
  */
 public class CameraActivity extends Activity implements View.OnClickListener {
 
-    public final static int    TYPE_IDCARD_FRONT      = 1;//身份证正面
-    public final static int    TYPE_IDCARD_BACK       = 2;//身份证反面
-    public final static int    REQUEST_CODE           = 0X11;//请求码
-    public final static int    RESULT_CODE            = 0X12;//结果码
-    public final static int    PERMISSION_CODE_FIRST = 0x13;//权限请求码
-    public final static String TAKE_TYPE              = "take_type";//拍摄类型标记
-    public final static String IMAGE_PATH             = "image_path";//图片路径标记
-    public static int      mType;//拍摄类型
-    public static Activity mActivity;
-    private boolean isToast = true;//是否弹吐司，为了保证for循环只弹一次
+    public final static  int     TYPE_IDCARD_FRONT     = 1;//身份证正面
+    public final static  int     TYPE_IDCARD_BACK      = 2;//身份证反面
+    public final static  int     REQUEST_CODE          = 0X11;//请求码
+    public final static  int     RESULT_CODE           = 0X12;//结果码
+    private final        int     PERMISSION_CODE_FIRST = 0x13;//权限请求码
+    private final static String  TAKE_TYPE             = "take_type";//拍摄类型标记
+    private final static String  IMAGE_PATH            = "image_path";//图片路径标记
+    private              int     mType;//拍摄类型
+    private              boolean isToast               = true;//是否弹吐司，为了保证for循环只弹一次
 
     private CropImageView mCropImageView;
     private Bitmap        mCropBitmap;
@@ -57,6 +56,8 @@ public class CameraActivity extends Activity implements View.OnClickListener {
     private View          mLlCameraOption;
     private View          mLlCameraResult;
     private TextView      mViewCameraCropBottom;
+    private FrameLayout   mFlCameraOption;
+    private View          mViewCameraCropLeft;
 
     /**
      * 跳转到拍照界面
@@ -145,21 +146,22 @@ public class CameraActivity extends Activity implements View.OnClickListener {
         mLlCameraResult = findViewById(R.id.ll_camera_result);
         mCropImageView = findViewById(R.id.crop_image_view);
         mViewCameraCropBottom = (TextView) findViewById(R.id.view_camera_crop_bottom);
+        mFlCameraOption = (FrameLayout) findViewById(R.id.fl_camera_option);
+        mViewCameraCropLeft = findViewById(R.id.view_camera_crop_left);
 
-        //获取屏幕最小边，设置为cameraPreview较窄的一边
-        float screenMinSize = Math.min(getResources().getDisplayMetrics().widthPixels, getResources().getDisplayMetrics().heightPixels);
-        //根据screenMinSize，计算出cameraPreview的较宽的一边，长宽比为标准的16:9
-        float maxSize = screenMinSize / 9.0f * 16.0f;
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int) maxSize, (int) screenMinSize);
-        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-        mCameraPreview.setLayoutParams(layoutParams);
-
+        float screenMinSize = Math.min(ScreenUtils.getScreenWidth(this), ScreenUtils.getScreenHeight(this));
+        float screenMaxSize = Math.max(ScreenUtils.getScreenWidth(this), ScreenUtils.getScreenHeight(this));
         float height = (int) (screenMinSize * 0.75);
         float width = (int) (height * 75.0f / 47.0f);
+        //获取底部"操作区域"的宽度
+        float flCameraOptionWidth = (screenMaxSize - width) / 2;
         LinearLayout.LayoutParams containerParams = new LinearLayout.LayoutParams((int) width, ViewGroup.LayoutParams.MATCH_PARENT);
         LinearLayout.LayoutParams cropParams = new LinearLayout.LayoutParams((int) width, (int) height);
+        LinearLayout.LayoutParams cameraOptionParams = new LinearLayout.LayoutParams((int) flCameraOptionWidth, ViewGroup.LayoutParams.MATCH_PARENT);
         mLlCameraCropContainer.setLayoutParams(containerParams);
         mIvCameraCrop.setLayoutParams(cropParams);
+        //获取"相机裁剪区域"的宽度来动态设置底部"操作区域"的宽度，使"相机裁剪区域"居中
+        mFlCameraOption.setLayoutParams(cameraOptionParams);
 
         switch (mType) {
             case TYPE_IDCARD_FRONT:
@@ -220,42 +222,55 @@ public class CameraActivity extends Activity implements View.OnClickListener {
      */
     private void takePhoto() {
         mCameraPreview.setEnabled(false);
-        mCameraPreview.takePhoto(new Camera.PictureCallback() {
+        CameraUtils.getCamera().setOneShotPreviewCallback(new Camera.PreviewCallback() {
             @Override
-            public void onPictureTaken(final byte[] data, Camera camera) {
+            public void onPreviewFrame(final byte[] bytes, Camera camera) {
+                final Camera.Size size = camera.getParameters().getPreviewSize(); //获取预览大小
                 camera.stopPreview();
-                //子线程处理图片，防止ANR
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-
-                        /*计算裁剪位置*/
-                        float left, top, right, bottom;
-                        left = ((float) mLlCameraCropContainer.getLeft() - (float) mCameraPreview.getLeft()) / (float) mCameraPreview.getWidth();
-                        top = (float) mIvCameraCrop.getTop() / (float) mCameraPreview.getHeight();
-                        right = (float) mLlCameraCropContainer.getRight() / (float) mCameraPreview.getWidth();
-                        bottom = (float) mIvCameraCrop.getBottom() / (float) mCameraPreview.getHeight();
-
-                        /*自动裁剪*/
-                        mCropBitmap = Bitmap.createBitmap(bitmap,
-                                (int) (left * (float) bitmap.getWidth()),
-                                (int) (top * (float) bitmap.getHeight()),
-                                (int) ((right - left) * (float) bitmap.getWidth()),
-                                (int) ((bottom - top) * (float) bitmap.getHeight()));
-
-                        /*手动裁剪*/
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                //将裁剪区域设置成与扫描框一样大
-                                mCropImageView.setLayoutParams(new LinearLayout.LayoutParams(mIvCameraCrop.getWidth(), mIvCameraCrop.getHeight()));
-                                setCropLayout();
-                                mCropImageView.setImageBitmap(mCropBitmap);
-                            }
-                        });
+                        final int w = size.width;
+                        final int h = size.height;
+                        Bitmap bitmap = ImageUtils.getBitmapFromByte(bytes, w, h);
+                        cropImage(bitmap);
                     }
                 }).start();
+            }
+        });
+    }
+
+    /**
+     * 裁剪图片
+     */
+    private void cropImage(Bitmap bitmap) {
+        /*计算扫描框的坐标点*/
+        float left = mViewCameraCropLeft.getWidth();
+        float top = mIvCameraCrop.getTop();
+        float right = mIvCameraCrop.getRight() + left;
+        float bottom = mIvCameraCrop.getBottom();
+
+        /*计算扫描框坐标点占原图坐标点的比例*/
+        float leftProportion = left / mCameraPreview.getWidth();
+        float topProportion = top / mCameraPreview.getHeight();
+        float rightProportion = right / mCameraPreview.getWidth();
+        float bottomProportion = bottom / mCameraPreview.getBottom();
+
+        /*自动裁剪*/
+        mCropBitmap = Bitmap.createBitmap(bitmap,
+                (int) (leftProportion * (float) bitmap.getWidth()),
+                (int) (topProportion * (float) bitmap.getHeight()),
+                (int) ((rightProportion - leftProportion) * (float) bitmap.getWidth()),
+                (int) ((bottomProportion - topProportion) * (float) bitmap.getHeight()));
+
+        /*设置成手动裁剪模式*/
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //将手动裁剪区域设置成与扫描框一样大
+                mCropImageView.setLayoutParams(new LinearLayout.LayoutParams(mIvCameraCrop.getWidth(), mIvCameraCrop.getHeight()));
+                setCropLayout();
+                mCropImageView.setImageBitmap(mCropBitmap);
             }
         });
     }
@@ -290,11 +305,11 @@ public class CameraActivity extends Activity implements View.OnClickListener {
      * 点击确认，返回图片路径
      */
     private void confirm() {
-        /*裁剪图片*/
+        /*手动裁剪图片*/
         mCropImageView.crop(new CropListener() {
             @Override
             public void onFinish(Bitmap bitmap) {
-                if(bitmap == null) {
+                if (bitmap == null) {
                     Toast.makeText(getApplicationContext(), getString(R.string.crop_fail), Toast.LENGTH_SHORT).show();
                     finish();
                 }
