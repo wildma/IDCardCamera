@@ -1,12 +1,15 @@
 # Android自定义身份证相机-IDCardCamera
 
 [![jitpack](https://jitpack.io/v/wildma/IDCardCamera.svg)](https://jitpack.io/#wildma/IDCardCamera)
-[![API](https://img.shields.io/badge/API-15%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=15)
+[![API](https://img.shields.io/badge/API-14%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=14)
 [![](https://img.shields.io/badge/License-Apache--2.0-brightgreen.svg)](https://github.com/wildma/IDCardCamera/blob/master/LICENSE)
 [![](https://img.shields.io/badge/Author-wildma-7AD6FD.svg)](https://github.com/wildma)
 
-### 效果图：
+### 效果图
 ![身份证来源网络虚拟构造](https://github.com/wildma/IDCardCamera/blob/master/screenshots/screenshot.jpg)
+
+### APK
+[点击下载APK](https://github.com/wildma/IDCardCamera/raw/master/apk/com.wildma.idcardcamera-1.0.2.apk)
 
 ### 功能特点
 - 自定义相机界面
@@ -16,7 +19,7 @@
 - 支持图片自动裁剪
 - 支持图片手动不规则裁剪
 
-### 2 使用
+### 使用
 ##### Step 1. 添加JitPack仓库
 在项目的build.gradle添加JitPack仓库
 ```
@@ -27,16 +30,13 @@ allprojects {
     }
 }
 ```
+
 ##### Step 2. 添加依赖
 在需要使用的module中添加依赖
 ```
 dependencies {
 	compile 'com.github.wildma:IDCardCamera:1.0.2'
 }
-```
-或者引用本地lib
-```
-compile project(':idcardcamera')
 ```
 
 ##### Step 3. 调用CameraActivity类的toCameraActivity方法打开拍照界面
@@ -60,7 +60,7 @@ CameraActivity.toCameraActivity(this, CameraActivity.TYPE_IDCARD_FRONT);
 
 详细介绍请看文章：[Android自定义相机实现身份证拍照，并加入自动对焦与图片不规则裁剪](https://www.jianshu.com/p/5e3cb0c63cd5)
 
-ps:如果对你有帮助，点下star就是对我最大的认可。
+ps：如果对你有帮助，点下star就是对我最大的认可。
 
 ### 感谢
 - [CertificateCamera](https://github.com/smartown/CertificateCamera) 
