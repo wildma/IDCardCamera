@@ -5,6 +5,8 @@
 [![](https://img.shields.io/badge/License-Apache--2.0-brightgreen.svg)](https://github.com/wildma/IDCardCamera/blob/master/LICENSE)
 [![](https://img.shields.io/badge/Author-wildma-7AD6FD.svg)](https://github.com/wildma)
 
+### [README of English](https://github.com/wildma/IDCardCamera/blob/master/README_EN.md)
+
 ### 效果图
 ![身份证来源网络虚拟构造](https://github.com/wildma/IDCardCamera/blob/master/screenshots/screenshot.jpg)
 
