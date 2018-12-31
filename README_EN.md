@@ -5,7 +5,7 @@
 [![](https://img.shields.io/badge/License-Apache--2.0-brightgreen.svg)](https://github.com/wildma/IDCardCamera/blob/master/LICENSE)
 [![](https://img.shields.io/badge/Author-wildma-7AD6FD.svg)](https://github.com/wildma)
 
-### [README of Chinese](https://github.com/wildma/IDCardCamera)
+### [README of Chinese](https://github.com/wildma/IDCardCamera/blob/master/README.md)
 
 ### Design sketch
 ![](https://github.com/wildma/IDCardCamera/blob/master/screenshots/screenshot.jpg)
