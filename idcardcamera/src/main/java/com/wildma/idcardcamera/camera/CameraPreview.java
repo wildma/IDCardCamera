@@ -28,6 +28,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     private AutoFocusManager mAutoFocusManager;
     private SensorControler  mSensorControler;
     private Context          mContext;
+    private SurfaceHolder    mSurfaceHolder;
 
     public CameraPreview(Context context) {
         super(context);
@@ -52,10 +53,10 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     private void init(Context context) {
         mContext = context;
-        SurfaceHolder surfaceHolder = getHolder();
-        surfaceHolder.addCallback(this);
-        surfaceHolder.setKeepScreenOn(true);
-        surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        mSurfaceHolder = getHolder();
+        mSurfaceHolder.addCallback(this);
+        mSurfaceHolder.setKeepScreenOn(true);
+        mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         mSensorControler = SensorControler.getInstance(context);
         mSensorControler.setCameraFocusListener(new SensorControler.CameraFocusListener() {
             @Override
@@ -159,6 +160,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     }
 
     public void surfaceDestroyed(SurfaceHolder holder) {
+        holder.removeCallback(this);
         //回收释放资源
         release();
     }
@@ -168,6 +170,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
      */
     private void release() {
         if (camera != null) {
+            camera.setPreviewCallback(null);
             camera.stopPreview();
             camera.release();
             camera = null;
@@ -243,6 +246,12 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     public void onStop() {
         if (mSensorControler != null) {
             mSensorControler.onStop();
+        }
+    }
+
+    public void addCallback() {
+        if (mSurfaceHolder != null) {
+            mSurfaceHolder.addCallback(this);
         }
     }
 }

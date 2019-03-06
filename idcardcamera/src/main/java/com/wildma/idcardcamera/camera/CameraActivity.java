@@ -211,6 +211,7 @@ public class CameraActivity extends Activity implements View.OnClickListener {
             confirm();
         } else if (id == R.id.iv_camera_result_cancel) {
             mCameraPreview.setEnabled(true);
+            mCameraPreview.addCallback();
             mCameraPreview.startPreview();
             mIvCameraFlash.setImageResource(R.mipmap.camera_flash_off);
             setTakePhotoLayout();
