@@ -8,7 +8,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.wildma.idcardcamera.camera.CameraActivity;
+import com.wildma.idcardcamera.camera.IDCardCamera;
 
 /**
  * Author   wildma
@@ -17,36 +17,42 @@ import com.wildma.idcardcamera.camera.CameraActivity;
  * Desc     ${身份证相机使用例子}
  */
 public class MainActivity extends AppCompatActivity {
-    private ImageView imageView;
+    private ImageView mIvFront;
+    private ImageView mIvBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        imageView = (ImageView) findViewById(R.id.iv_image);
+        mIvFront = (ImageView) findViewById(R.id.iv_front);
+        mIvBack = (ImageView) findViewById(R.id.iv_back);
     }
 
     /**
      * 身份证正面
      */
-    public void frontIdCard(View view) {
-        CameraActivity.toCameraActivity(this, CameraActivity.TYPE_IDCARD_FRONT);
+    public void front(View view) {
+        IDCardCamera.create(this).openCamera(IDCardCamera.TYPE_IDCARD_FRONT);
     }
 
     /**
      * 身份证反面
      */
-    public void backIdCard(View view) {
-        CameraActivity.toCameraActivity(this, CameraActivity.TYPE_IDCARD_BACK);
+    public void back(View view) {
+        IDCardCamera.create(this).openCamera(IDCardCamera.TYPE_IDCARD_BACK);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == CameraActivity.REQUEST_CODE && resultCode == CameraActivity.RESULT_CODE) {
+        if (resultCode == IDCardCamera.RESULT_CODE) {
             //获取图片路径，显示图片
-            final String path = CameraActivity.getImagePath(data);
+            final String path = IDCardCamera.getImagePath(data);
             if (!TextUtils.isEmpty(path)) {
-                imageView.setImageBitmap(BitmapFactory.decodeFile(path));
+                if (requestCode == IDCardCamera.TYPE_IDCARD_FRONT) { //身份证正面
+                    mIvFront.setImageBitmap(BitmapFactory.decodeFile(path));
+                } else if (requestCode == IDCardCamera.TYPE_IDCARD_BACK) {  //身份证反面
+                    mIvBack.setImageBitmap(BitmapFactory.decodeFile(path));
+                }
             }
         }
     }

@@ -57,13 +57,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         mSurfaceHolder.addCallback(this);
         mSurfaceHolder.setKeepScreenOn(true);
         mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-        mSensorControler = SensorControler.getInstance(context);
-        mSensorControler.setCameraFocusListener(new SensorControler.CameraFocusListener() {
-            @Override
-            public void onFocus() {
-                focus();
-            }
-        });
+        mSensorControler = SensorControler.getInstance(context.getApplicationContext());
     }
 
     public void surfaceCreated(SurfaceHolder holder) {
@@ -238,8 +232,15 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     }
 
     public void onStart() {
+        addCallback();
         if (mSensorControler != null) {
             mSensorControler.onStart();
+            mSensorControler.setCameraFocusListener(new SensorControler.CameraFocusListener() {
+                @Override
+                public void onFocus() {
+                    focus();
+                }
+            });
         }
     }
 

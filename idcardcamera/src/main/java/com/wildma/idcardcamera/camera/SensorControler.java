@@ -56,6 +56,7 @@ public class SensorControler implements SensorEventListener {
     }
 
     public void onStop() {
+        mCameraFocusListener = null;
         mSensorManager.unregisterListener(this, mSensor);
         canFocus = false;
     }

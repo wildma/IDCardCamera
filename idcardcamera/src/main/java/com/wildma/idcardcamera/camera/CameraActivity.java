@@ -37,16 +37,6 @@ import com.wildma.idcardcamera.utils.ScreenUtils;
  */
 public class CameraActivity extends Activity implements View.OnClickListener {
 
-    public final static  int     TYPE_IDCARD_FRONT     = 1;//身份证正面
-    public final static  int     TYPE_IDCARD_BACK      = 2;//身份证反面
-    public final static  int     REQUEST_CODE          = 0X11;//请求码
-    public final static  int     RESULT_CODE           = 0X12;//结果码
-    private final        int     PERMISSION_CODE_FIRST = 0x13;//权限请求码
-    private final static String  TAKE_TYPE             = "take_type";//拍摄类型标记
-    private final static String  IMAGE_PATH            = "image_path";//图片路径标记
-    private              int     mType;//拍摄类型
-    private              boolean isToast               = true;//是否弹吐司，为了保证for循环只弹一次
-
     private CropImageView mCropImageView;
     private Bitmap        mCropBitmap;
     private CameraPreview mCameraPreview;
@@ -59,38 +49,15 @@ public class CameraActivity extends Activity implements View.OnClickListener {
     private FrameLayout   mFlCameraOption;
     private View          mViewCameraCropLeft;
 
-    /**
-     * 跳转到拍照界面
-     *
-     * @param activity
-     * @param type     拍摄类型
-     */
-    public static void toCameraActivity(Activity activity, int type) {
-        Intent intent = new Intent(activity, CameraActivity.class);
-        intent.putExtra(TAKE_TYPE, type);
-        activity.startActivityForResult(intent, REQUEST_CODE);
-    }
-
-    /**
-     * 获取图片路径
-     *
-     * @param data
-     * @return
-     */
-    public static String getImagePath(Intent data) {
-        if (data != null) {
-            return data.getStringExtra(IMAGE_PATH);
-        }
-        return "";
-    }
-
+    private int     mType;//拍摄类型
+    private boolean isToast = true;//是否弹吐司，为了保证for循环只弹一次
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         /*动态请求需要的权限*/
-        boolean checkPermissionFirst = PermissionUtils.checkPermissionFirst(this, PERMISSION_CODE_FIRST,
+        boolean checkPermissionFirst = PermissionUtils.checkPermissionFirst(this, IDCardCamera.PERMISSION_CODE_FIRST,
                 new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA});
         if (checkPermissionFirst) {
             init();
@@ -131,7 +98,7 @@ public class CameraActivity extends Activity implements View.OnClickListener {
 
     private void init() {
         setContentView(R.layout.activity_camera);
-        mType = getIntent().getIntExtra(TAKE_TYPE, 0);
+        mType = getIntent().getIntExtra(IDCardCamera.TAKE_TYPE, 0);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         initView();
         initListener();
@@ -164,10 +131,10 @@ public class CameraActivity extends Activity implements View.OnClickListener {
         mFlCameraOption.setLayoutParams(cameraOptionParams);
 
         switch (mType) {
-            case TYPE_IDCARD_FRONT:
+            case IDCardCamera.TYPE_IDCARD_FRONT:
                 mIvCameraCrop.setImageResource(R.mipmap.camera_idcard_front);
                 break;
-            case TYPE_IDCARD_BACK:
+            case IDCardCamera.TYPE_IDCARD_BACK:
                 mIvCameraCrop.setImageResource(R.mipmap.camera_idcard_back);
                 break;
         }
@@ -319,16 +286,16 @@ public class CameraActivity extends Activity implements View.OnClickListener {
                 if (FileUtils.createOrExistsDir(Constant.DIR_ROOT)) {
                     StringBuffer buffer = new StringBuffer();
                     String imagePath = "";
-                    if (mType == TYPE_IDCARD_FRONT) {
+                    if (mType == IDCardCamera.TYPE_IDCARD_FRONT) {
                         imagePath = buffer.append(Constant.DIR_ROOT).append(Constant.APP_NAME).append(".").append("idCardFrontCrop.jpg").toString();
-                    } else if (mType == TYPE_IDCARD_BACK) {
+                    } else if (mType == IDCardCamera.TYPE_IDCARD_BACK) {
                         imagePath = buffer.append(Constant.DIR_ROOT).append(Constant.APP_NAME).append(".").append("idCardBackCrop.jpg").toString();
                     }
 
                     if (ImageUtils.save(bitmap, imagePath, Bitmap.CompressFormat.JPEG)) {
                         Intent intent = new Intent();
-                        intent.putExtra(CameraActivity.IMAGE_PATH, imagePath);
-                        setResult(RESULT_CODE, intent);
+                        intent.putExtra(IDCardCamera.IMAGE_PATH, imagePath);
+                        setResult(IDCardCamera.RESULT_CODE, intent);
                         finish();
                     }
                 }
