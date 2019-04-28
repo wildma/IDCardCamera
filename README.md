@@ -11,7 +11,7 @@
 ![身份证来源网络虚拟构造](https://github.com/wildma/IDCardCamera/blob/master/screenshots/screenshot.jpg)
 
 ### APK
-[点击下载APK](https://github.com/wildma/IDCardCamera/raw/master/apk/com.wildma.idcardcamera-1.0.2.apk)
+[点击下载APK](https://github.com/wildma/IDCardCamera/raw/master/apk/com.wildma.idcardcamera-1.1.0.apk)
 
 ### 功能特点
 - 自定义相机界面
@@ -22,8 +22,8 @@
 - 支持图片手动不规则裁剪
 
 ### 使用
-##### Step 1. 添加JitPack仓库
-在项目的build.gradle添加JitPack仓库
+##### Step 1. 添加 JitPack 仓库
+在项目的 build.gradle 添加 JitPack 仓库
 ```
 allprojects {
     repositories {
@@ -34,27 +34,37 @@ allprojects {
 ```
 
 ##### Step 2. 添加依赖
-在需要使用的module中添加依赖
+在需要使用的 module 中添加依赖
 ```
 dependencies {
-	compile 'com.github.wildma:IDCardCamera:1.0.2'
+	compile 'com.github.wildma:IDCardCamera:1.1.0'
 }
 ```
 
-##### Step 3. 调用CameraActivity类的toCameraActivity方法打开拍照界面
+##### Step 3. 打开拍照界面
+- 身份证正面
 ```
-CameraActivity.toCameraActivity(this, CameraActivity.TYPE_IDCARD_FRONT);
+IDCardCamera.create(this).openCamera(IDCardCamera.TYPE_IDCARD_FRONT);
 ```
+- 身份证反面
+```
+IDCardCamera.create(this).openCamera(IDCardCamera.TYPE_IDCARD_BACK);
+```
+**注意：** create() 方法的参数传的是上下文，在 Activity 中传 activity.this，在 Fragment 中传 fragment.this
 
-##### Step 4. 在onActivityResult方法中获取裁剪后的图片
+##### Step 4. 在 onActivityResult 方法中获取裁剪后的图片
 ```
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == CameraActivity.REQUEST_CODE && resultCode == CameraActivity.RESULT_CODE) {
+        if (resultCode == IDCardCamera.RESULT_CODE) {
             //获取图片路径，显示图片
-            final String path = CameraActivity.getImagePath(data);
+            final String path = IDCardCamera.getImagePath(data);
             if (!TextUtils.isEmpty(path)) {
-                imageView.setImageBitmap(BitmapFactory.decodeFile(path));
+                if (requestCode == IDCardCamera.TYPE_IDCARD_FRONT) { //身份证正面
+                    mIvFront.setImageBitmap(BitmapFactory.decodeFile(path));
+                } else if (requestCode == IDCardCamera.TYPE_IDCARD_BACK) {  //身份证反面
+                    mIvBack.setImageBitmap(BitmapFactory.decodeFile(path));
+                }
             }
         }
     }
@@ -62,7 +72,7 @@ CameraActivity.toCameraActivity(this, CameraActivity.TYPE_IDCARD_FRONT);
 
 详细介绍请看文章：[Android自定义相机实现身份证拍照，并加入自动对焦与图片不规则裁剪](https://www.jianshu.com/p/5e3cb0c63cd5)
 
-ps：如果对你有帮助，点下star就是对我最大的认可。
+ps：如果对你有帮助，点下 star 就是对我最大的认可。
 
 ### 感谢
 - [CertificateCamera](https://github.com/smartown/CertificateCamera) 
