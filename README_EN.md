@@ -11,7 +11,7 @@
 ![](https://github.com/wildma/IDCardCamera/blob/master/screenshots/screenshot.jpg)
 
 ### APK
-[download APK](https://github.com/wildma/IDCardCamera/raw/master/apk/com.wildma.idcardcamera-1.0.2.apk)
+[download APK](https://github.com/wildma/IDCardCamera/raw/master/apk/com.wildma.idcardcamera-1.1.0.apk)
 
 ### Features
 - Custom camera interface
@@ -35,23 +35,33 @@ allprojects {
 ##### Step 2. Add a gradle dependency
 ```
 dependencies {
-	compile 'com.github.wildma:IDCardCamera:1.0.2'
+	compile 'com.github.wildma:IDCardCamera:1.1.0'
 }
 ```
 
 ##### Step 3. Open photographic interface
+- front
 ```
-CameraActivity.toCameraActivity(this, CameraActivity.TYPE_IDCARD_FRONT);
+IDCardCamera.create(this).openCamera(IDCardCamera.TYPE_IDCARD_FRONT);
 ```
+- back
+```
+IDCardCamera.create(this).openCamera(IDCardCamera.TYPE_IDCARD_BACK);
+```
+**notice：** In the Fragment,Replace "this" with "fragment.this".
 
 ##### Step 4. Get a picture
 ```
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == CameraActivity.REQUEST_CODE && resultCode == CameraActivity.RESULT_CODE) {
-            final String path = CameraActivity.getImagePath(data);
+        if (resultCode == IDCardCamera.RESULT_CODE) {
+            final String path = IDCardCamera.getImagePath(data);
             if (!TextUtils.isEmpty(path)) {
-                imageView.setImageBitmap(BitmapFactory.decodeFile(path));
+                if (requestCode == IDCardCamera.TYPE_IDCARD_FRONT) {
+                    mIvFront.setImageBitmap(BitmapFactory.decodeFile(path));
+                } else if (requestCode == IDCardCamera.TYPE_IDCARD_BACK) {
+                    mIvBack.setImageBitmap(BitmapFactory.decodeFile(path));
+                }
             }
         }
     }
