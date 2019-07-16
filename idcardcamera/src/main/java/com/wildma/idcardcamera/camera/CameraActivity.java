@@ -23,6 +23,7 @@ import com.wildma.idcardcamera.R;
 import com.wildma.idcardcamera.cropper.CropImageView;
 import com.wildma.idcardcamera.cropper.CropListener;
 import com.wildma.idcardcamera.global.Constant;
+import com.wildma.idcardcamera.utils.CommonUtils;
 import com.wildma.idcardcamera.utils.FileUtils;
 import com.wildma.idcardcamera.utils.ImageUtils;
 import com.wildma.idcardcamera.utils.PermissionUtils;
@@ -170,10 +171,16 @@ public class CameraActivity extends Activity implements View.OnClickListener {
         } else if (id == R.id.iv_camera_close) {
             finish();
         } else if (id == R.id.iv_camera_take) {
-            takePhoto();
+            if (!CommonUtils.isFastClick()) {
+                takePhoto();
+            }
         } else if (id == R.id.iv_camera_flash) {
-            boolean isFlashOn = mCameraPreview.switchFlashLight();
-            mIvCameraFlash.setImageResource(isFlashOn ? R.mipmap.camera_flash_on : R.mipmap.camera_flash_off);
+            if (CameraUtils.hasFlash(this)) {
+                boolean isFlashOn = mCameraPreview.switchFlashLight();
+                mIvCameraFlash.setImageResource(isFlashOn ? R.mipmap.camera_flash_on : R.mipmap.camera_flash_off);
+            } else {
+                Toast.makeText(this, R.string.no_flash, Toast.LENGTH_SHORT).show();
+            }
         } else if (id == R.id.iv_camera_result_ok) {
             confirm();
         } else if (id == R.id.iv_camera_result_cancel) {

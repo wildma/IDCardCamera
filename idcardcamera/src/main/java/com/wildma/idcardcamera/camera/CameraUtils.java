@@ -48,4 +48,13 @@ public class CameraUtils {
     public static Camera getCamera() {
         return camera;
     }
+
+    /**
+     * 检查是否有闪光灯
+     *
+     * @return true：有，false：无
+     */
+    public static boolean hasFlash(Context context) {
+        return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
+    }
 }
