@@ -1,5 +1,6 @@
 package com.wildma.idcardcamera.utils;
 
+import android.content.Context;
 import android.os.Environment;
 
 import java.io.Closeable;
@@ -134,6 +135,44 @@ public final class FileUtils {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * 获取缓存图片的目录
+     *
+     * @param context Context
+     * @return 缓存图片的目录
+     */
+    public static String getImageCacheDir(Context context) {
+        File file;
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+            file = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        } else {
+            file = context.getCacheDir();
+        }
+        String path = file.getPath() + "/cache";
+        File cachePath = new File(path);
+        if (!cachePath.exists())
+            cachePath.mkdir();
+        return path;
+    }
+
+    /**
+     * 删除缓存图片目录中的全部图片
+     *
+     * @param context
+     */
+    public static void clearCache(Context context) {
+        String cacheImagePath = getImageCacheDir(context);
+        File cacheImageDir = new File(cacheImagePath);
+        File[] files = cacheImageDir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isFile()) {
+                    file.delete();
+                }
+            }
         }
     }
 

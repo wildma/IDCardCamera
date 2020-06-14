@@ -22,12 +22,13 @@ import android.widget.Toast;
 import com.wildma.idcardcamera.R;
 import com.wildma.idcardcamera.cropper.CropImageView;
 import com.wildma.idcardcamera.cropper.CropListener;
-import com.wildma.idcardcamera.global.Constant;
 import com.wildma.idcardcamera.utils.CommonUtils;
 import com.wildma.idcardcamera.utils.FileUtils;
 import com.wildma.idcardcamera.utils.ImageUtils;
 import com.wildma.idcardcamera.utils.PermissionUtils;
 import com.wildma.idcardcamera.utils.ScreenUtils;
+
+import java.io.File;
 
 
 /**
@@ -290,21 +291,13 @@ public class CameraActivity extends Activity implements View.OnClickListener {
                 }
 
                 /*保存图片到sdcard并返回图片路径*/
-                if (FileUtils.createOrExistsDir(Constant.DIR_ROOT)) {
-                    StringBuffer buffer = new StringBuffer();
-                    String imagePath = "";
-                    if (mType == IDCardCamera.TYPE_IDCARD_FRONT) {
-                        imagePath = buffer.append(Constant.DIR_ROOT).append(Constant.APP_NAME).append(".").append("idCardFrontCrop.jpg").toString();
-                    } else if (mType == IDCardCamera.TYPE_IDCARD_BACK) {
-                        imagePath = buffer.append(Constant.DIR_ROOT).append(Constant.APP_NAME).append(".").append("idCardBackCrop.jpg").toString();
-                    }
-
-                    if (ImageUtils.save(bitmap, imagePath, Bitmap.CompressFormat.JPEG)) {
-                        Intent intent = new Intent();
-                        intent.putExtra(IDCardCamera.IMAGE_PATH, imagePath);
-                        setResult(IDCardCamera.RESULT_CODE, intent);
-                        finish();
-                    }
+                String imagePath = new StringBuffer().append(FileUtils.getImageCacheDir(CameraActivity.this)).append(File.separator)
+                        .append(System.currentTimeMillis()).append(".jpg").toString();
+                if (ImageUtils.save(bitmap, imagePath, Bitmap.CompressFormat.JPEG)) {
+                    Intent intent = new Intent();
+                    intent.putExtra(IDCardCamera.IMAGE_PATH, imagePath);
+                    setResult(IDCardCamera.RESULT_CODE, intent);
+                    finish();
                 }
             }
         }, true);

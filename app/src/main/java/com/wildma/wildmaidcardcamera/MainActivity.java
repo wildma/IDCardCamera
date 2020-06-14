@@ -53,6 +53,9 @@ public class MainActivity extends AppCompatActivity {
                 } else if (requestCode == IDCardCamera.TYPE_IDCARD_BACK) {  //身份证反面
                     mIvBack.setImageBitmap(BitmapFactory.decodeFile(path));
                 }
+
+                //实际开发中将图片上传到服务器成功后需要删除全部缓存图片
+//                FileUtils.clearCache(this);
             }
         }
     }
