@@ -1,4 +1,5 @@
-# Android自定义身份证相机-IDCardCamera
+# IDCardCamera
+Android 自定义身份证相机
 
 [![jitpack](https://jitpack.io/v/wildma/IDCardCamera.svg)](https://jitpack.io/#wildma/IDCardCamera)
 [![API](https://img.shields.io/badge/API-14%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=14)
@@ -11,7 +12,7 @@
 ![身份证来源网络虚拟构造](https://github.com/wildma/IDCardCamera/blob/master/screenshots/screenshot.jpg)
 
 ### APK
-[点击下载APK](https://github.com/wildma/IDCardCamera/raw/master/apk/com.wildma.idcardcamera-1.1.0.apk)
+[点击下载APK](https://github.com/wildma/IDCardCamera/raw/master/apk/com.wildma.idcardcamera-1.1.1.apk)
 
 ### 功能特点
 - 自定义相机界面
@@ -37,7 +38,7 @@ allprojects {
 在需要使用的 module 中添加依赖
 ```
 dependencies {
-	compile 'com.github.wildma:IDCardCamera:1.1.0'
+	compile 'com.github.wildma:IDCardCamera:1.1.1'
 }
 ```
 
@@ -70,7 +71,13 @@ IDCardCamera.create(this).openCamera(IDCardCamera.TYPE_IDCARD_BACK);
     }
 ```
 
-详细介绍请看文章：[Android自定义相机实现身份证拍照，并加入自动对焦与图片不规则裁剪](https://www.jianshu.com/p/5e3cb0c63cd5)
+### 清理缓存
+实际开发中将图片上传到服务器成功后需要删除全部缓存图片，调用如下方法即可：
+```java
+    FileUtils.clearCache(this);
+```
+
+详细介绍请看文章：[Android 自定义相机实现身份证拍照，并加入自动对焦与图片不规则裁剪](https://www.jianshu.com/p/5e3cb0c63cd5)
 
 ps：如果对你有帮助，点下 star 就是对我最大的认可。
 
