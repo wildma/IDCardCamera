@@ -55,26 +55,26 @@ IDCardCamera.create(this).openCamera(IDCardCamera.TYPE_IDCARD_BACK);
 
 ##### Step 4. 在 onActivityResult 方法中获取裁剪后的图片
 ```
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == IDCardCamera.RESULT_CODE) {
-            //获取图片路径，显示图片
-            final String path = IDCardCamera.getImagePath(data);
-            if (!TextUtils.isEmpty(path)) {
-                if (requestCode == IDCardCamera.TYPE_IDCARD_FRONT) { //身份证正面
-                    mIvFront.setImageBitmap(BitmapFactory.decodeFile(path));
-                } else if (requestCode == IDCardCamera.TYPE_IDCARD_BACK) {  //身份证反面
-                    mIvBack.setImageBitmap(BitmapFactory.decodeFile(path));
-                }
-            }
-        }
-    }
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	if (resultCode == IDCardCamera.RESULT_CODE) {
+		//获取图片路径，显示图片
+		final String path = IDCardCamera.getImagePath(data);
+		if (!TextUtils.isEmpty(path)) {
+			if (requestCode == IDCardCamera.TYPE_IDCARD_FRONT) { //身份证正面
+				mIvFront.setImageBitmap(BitmapFactory.decodeFile(path));
+			} else if (requestCode == IDCardCamera.TYPE_IDCARD_BACK) {  //身份证反面
+				mIvBack.setImageBitmap(BitmapFactory.decodeFile(path));
+			}
+		}
+	}
+}
 ```
 
 ### 清理缓存
 实际开发中将图片上传到服务器成功后需要删除全部缓存图片，调用如下方法即可：
 ```java
-    FileUtils.clearCache(this);
+FileUtils.clearCache(this);
 ```
 
 详细介绍请看文章：[Android 自定义相机实现身份证拍照，并加入自动对焦与图片不规则裁剪](https://www.jianshu.com/p/5e3cb0c63cd5)
