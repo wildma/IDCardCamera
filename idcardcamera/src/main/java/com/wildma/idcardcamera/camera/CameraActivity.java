@@ -101,7 +101,6 @@ public class CameraActivity extends Activity implements View.OnClickListener {
     private void init() {
         setContentView(R.layout.activity_camera);
         mType = getIntent().getIntExtra(IDCardCamera.TAKE_TYPE, 0);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         initView();
         initListener();
     }
